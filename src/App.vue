@@ -3,6 +3,7 @@
     <div id="nav">
       <h2>哈哈哈</h2>
       <div class="test"></div>
+      <span>大大大</span>
     </div>
     <router-view/>
   </div>
@@ -11,7 +12,7 @@
 <style lang="sass">
 @import '@/styles/_color.sass'
 .test
-  width: 200px
-  height: 200px
+  width: 75px
+  height: 75px
   background-color: $color-red
 </style>
