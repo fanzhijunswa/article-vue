@@ -9,12 +9,19 @@ instance.interceptors.request.use(config => {
   return config
 }, err => Promise.reject(err))
 
+instance.interceptors.response.use(
+  res => {
+    return res?.data?.data ?? res
+  },
+  err => Promise.reject(err)
+)
+
 export default ({ url, method = 'get', data = {} }) => {
   return new Promise((resolve, reject) => {
     instance({
       url,
       method,
-      [method === 'get' ? 'params' : data]: data
+      [method === 'get' ? 'params' : 'data']: data
     }).then(resp => resolve(resp), e => reject(e))
   })
 }
