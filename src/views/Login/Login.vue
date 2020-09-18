@@ -54,9 +54,9 @@ export default {
   methods: {
     async onSubmit () {
       this.$toast.loading({
-        message: '登录中...', // 提示文本
-        forbidClick: true, // 禁止背景点击
-        duration: 0 // 展示时长(ms)，值为 0 时，toast 不会消失
+        message: '登录中...',
+        forbidClick: true,
+        duration: 0
       })
       try {
         const { token, refresh_token } = await login(this.formData)

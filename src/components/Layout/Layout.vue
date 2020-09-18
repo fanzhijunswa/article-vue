@@ -7,17 +7,25 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Tabbar from './Tabbar'
 export default {
   name: 'Layout',
   components: {
     Tabbar
   },
+  async created () {
+    await this.getUserInfo()
+  },
   data () {
     return {
     }
   },
-  methods: {}
+  methods: {
+    ...mapActions('User', {
+      getUserInfo: 'getUserInfo'
+    })
+  }
 }
 </script>
 

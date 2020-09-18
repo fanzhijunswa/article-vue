@@ -19,3 +19,16 @@ export const login = data => {
     data
   })
 }
+
+/**
+ * 获取用户信息
+ */
+export const getCurrentUser = () => api({ url: `${BASE_URL}/user` })
+
+export const refreshTokenReq = refresh_token => api({
+  method: 'PUT',
+  url: `${BASE_URL}/authorizations`,
+  headers: {
+    Authorization: `Bearer ${refresh_token}`
+  }
+})
