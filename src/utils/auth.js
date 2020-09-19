@@ -2,7 +2,10 @@ import axios from 'axios'
 import { Toast } from 'vant'
 import store from '@/store'
 import router from '@/router'
-import { refreshTokenReq } from '@/api'
+
+// 获取心 token的axios请求，和别的axios请求不一样，这个axios请求的请求头需要配置refresh_token
+const refreshTokenReq = axios.create({ baseURL: 'http://ttapi.research.itcast.cn/' })
+
 const instance = axios.create()
 instance.defaults.baseURL = 'http://ttapi.research.itcast.cn/'
 
@@ -30,21 +33,28 @@ instance.interceptors.response.use(
 
 async function noToken (err) {
   const [token, refresh_token] = [localStorage.getItem('article_token'), localStorage.getItem('article_refresh_token')]
-  store.commit('User/removeAll')
+  store.commit('User/setUserInfo', {})
+  localStorage.removeItem('article_token')
   if (!token || !refresh_token) {
-    router.push('/login')
+    router.replace({ name: 'login', query: { redirect: router.currentRoute.fullPath } })
     return false
   }
   try {
-    const token = await refreshTokenReq(refresh_token)
+    const { data: { data: { token } } } = await refreshTokenReq({
+      method: 'PUT',
+      url: '/app/v1_0/authorizations',
+      headers: {
+        Authorization: `Bearer ${refresh_token}`
+      }
+    })
     localStorage.setItem(token)
     return instance(err.config)
   } catch (e) {
-    router.replace({ name: 'login', query: { redirect: router.currentRoute.fullPath } })
+    console.warn(e)
   }
 }
 
-export default ({ url, method = 'get', data = {} }) => {
+const apiMiddleFunc = ({ url, method, data = {} }) => {
   return new Promise((resolve, reject) => {
     instance({
       url,
@@ -53,3 +63,10 @@ export default ({ url, method = 'get', data = {} }) => {
     }).then(resp => resolve(resp), e => reject(e))
   })
 }
+
+const api = ['get', 'post', 'delete', 'put'].reduce((prev, method) => {
+  prev[method] = (url, data) => apiMiddleFunc({ url, method, data })
+  return prev
+}, {})
+
+export default api

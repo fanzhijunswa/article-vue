@@ -1,4 +1,4 @@
 export default {
-  id: state => state.userInfo.id,
-  name: state => state.userInfo.name
+  userId: state => state.userInfo.id,
+  userName: state => state.userInfo.name
 }

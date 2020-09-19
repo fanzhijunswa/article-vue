@@ -15,7 +15,7 @@ export default {
     Tabbar
   },
   async created () {
-    await this.getUserInfo()
+    !!localStorage.getItem('article_token') && await this.getUserInfo()
   },
   data () {
     return {
