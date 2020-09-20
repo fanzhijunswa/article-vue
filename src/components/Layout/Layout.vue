@@ -1,7 +1,8 @@
 <template lang="pug">
 #Layout
   .container
-    router-view
+    keep-alive
+      router-view
   .top
     Tabbar
 </template>
@@ -13,6 +14,11 @@ export default {
   name: 'Layout',
   components: {
     Tabbar
+  },
+  activated () {
+
+  },
+  deactivated () {
   },
   async created () {
     !!localStorage.getItem('article_token') && await this.getUserInfo()

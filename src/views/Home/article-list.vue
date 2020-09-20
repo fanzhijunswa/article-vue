@@ -1,10 +1,16 @@
 <template lang="pug">
   .article-list(ref="article-list")
-    article-item(v-for="article of articles" :key="article.art_id" :article="article")
-  </div>
+    van-pull-refresh(v-model="refreshing" @refresh="onRefresh")
+      van-list(
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad")
+        article-item(v-for="(article,index) of articles" :key="index" :article="article")
 </template>
 
 <script>
+import _ from 'lodash'
 import ArticleItem from './article-item'
 import { getArticles } from '@/api'
 export default {
@@ -20,23 +26,48 @@ export default {
   },
   data () {
     return {
+      refreshing: false,
+      loading: false,
+      finished: false,
       timestamp: Date.now(),
       articles: [],
-      page: 0
+      page: 0,
+      scrollTop: 0
     }
   },
-  async created () {
-    try {
-      await this.getArticles()
-    } catch (e) {
-    }
+  activated () {
+    this.$refs['article-list'].scrollTop = this.scrollTop
   },
   computed: {},
   watch: {},
   mounted () {
+    this.$refs['article-list'].onscroll = _.debounce(e => {
+      this.scrollTop = e.target.scrollTop
+    }, 50)
   },
   methods: {
-    getArticles () {
+    // 下拉刷新为0,上拉加载为1
+    async onRefresh () {
+      try {
+        await this.getArticles(0)
+        this.finished = false
+      } catch (e) {
+        console.warn('下拉刷新失败')
+      } finally {
+        this.refreshing = false
+      }
+    },
+    async onLoad () {
+      try {
+        const results = await this.getArticles(1)
+        !results.length && (this.finished = true)
+      } catch (e) {
+        console.warn('上拉加载失败')
+      } finally {
+        this.loading = false
+      }
+    },
+    getArticles (flag) {
       return new Promise(async (resolve, reject) => {
         try {
           const { timestamp, channelId: channel_id } = this
@@ -45,10 +76,10 @@ export default {
             timestamp,
             with_top: 1
           })
-          this.articles = [...results, ...this.articles]
+          this.articles = !!flag ? [...this.articles, ...results] : results
           this.page = page
-          this.timestamp = pre_timestamp
-          resolve()
+          !!pre_timestamp && (this.timestamp = pre_timestamp)
+          resolve(results)
         } catch (e) {
           reject('文章获取失败')
         }
@@ -66,5 +97,4 @@ export default {
   bottom: 50px
   top: 90px
   overflow-y: auto
-
 </style>

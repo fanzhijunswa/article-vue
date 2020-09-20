@@ -1,6 +1,7 @@
 <template lang="pug">
 #App
-  router-view
+  keep-alive(include="Layout")
+    router-view
 </template>
 
 <script>

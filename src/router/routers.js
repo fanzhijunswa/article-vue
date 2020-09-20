@@ -27,5 +27,12 @@ export default [
       requireAuth: false
     },
     component: () => import('@/views/My')
+  }, {
+    path: '/article/:aid',
+    name: 'article',
+    meta: {
+      requireAuth: false
+    },
+    component: () => import('@/views/Article')
   }
 ]
