@@ -36,6 +36,7 @@ export default {
     }
   },
   activated () {
+    console.log(10)
     this.$refs['article-list'].scrollTop = this.scrollTop
   },
   computed: {},
