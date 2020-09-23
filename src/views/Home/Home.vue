@@ -36,6 +36,7 @@ export default {
   computed: {},
   watch: {},
   async activated () {
+    console.log(1)
     try {
       await this.getAllChannels()
     } catch (e) {
