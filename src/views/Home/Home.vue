@@ -29,6 +29,7 @@ export default {
   props: {},
   data () {
     return {
+      testShow: false,
       channels: []
     }
   },
