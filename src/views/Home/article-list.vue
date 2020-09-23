@@ -41,7 +41,6 @@ export default {
   computed: {},
   watch: {},
   mounted () {
-    console.log(1)
     this.$refs['article-list'].onscroll = _.debounce(e => {
       this.scrollTop = e.target.scrollTop
     }, 50)
